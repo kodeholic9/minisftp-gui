@@ -2,33 +2,16 @@
 // author: kodeholic (powered by Claude)
 
 use minisftp_core::sftp::SftpClient;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
 use tokio::sync::Mutex;
+use tokio_util::sync::CancellationToken;
 
 pub mod commands;
 
 /// 전역 SFTP 세션 상태
 pub struct SftpState(pub Mutex<Option<SftpClient>>);
 
-/// 전송 취소 플래그
-#[derive(Clone)]
-pub struct CancelFlag(pub Arc<AtomicBool>);
-
-impl CancelFlag {
-    pub fn new() -> Self {
-        Self(Arc::new(AtomicBool::new(false)))
-    }
-    pub fn cancel(&self) {
-        self.0.store(true, Ordering::Relaxed)
-    }
-    pub fn reset(&self) {
-        self.0.store(false, Ordering::Relaxed)
-    }
-    pub fn is_cancelled(&self) -> bool {
-        self.0.load(Ordering::Relaxed)
-    }
-}
+/// 전송 취소 토큰
+pub struct CancelState(pub Mutex<Option<CancellationToken>>);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -37,7 +20,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .manage(SftpState(Mutex::new(None)))
-        .manage(CancelFlag::new())
+        .manage(CancelState(Mutex::new(None)))
         .invoke_handler(tauri::generate_handler![
             commands::connect::cmd_connect,
             commands::connect::cmd_disconnect,
