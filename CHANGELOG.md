@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.1] - 2025-02-22
 
+### Fixed
+- **빌드 오류 수정** — `@tauri-apps/plugin-store` API 변경 대응, `load()` 옵션에 `defaults: {}` 추가 (TS2345)
+
 ### Added
 - **전송 취소 기능** — `tokio-util` CancellationToken 기반으로 전송 중 취소 버튼 클릭 시 즉시 중단
 - **BottomPane 취소 버튼** — 전송 중일 때만 표시, 완료/에러/취소 시 자동 숨김

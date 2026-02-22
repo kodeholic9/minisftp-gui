@@ -25,7 +25,7 @@ export const useSessionStore = defineStore('sessions', () => {
 
   // store 인스턴스 (lazy init)
   async function getStore() {
-    return await load(STORE_FILE, { autoSave: true })
+    return await load(STORE_FILE, { autoSave: true, defaults: {} })
   }
 
   async function loadSessions() {
